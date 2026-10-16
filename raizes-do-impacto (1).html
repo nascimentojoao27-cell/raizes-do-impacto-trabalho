@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raízes do Impacto • Social</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1e8a4c;
+    --light: #2ecc71;
+    --blue: #2980b9;
+    --gold: #f39c12;
+    --dark: #0f2418;
+    --card: rgba(255,255,255,0.97);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #0c1a12 url('imagine_images/mKHyv.jpg') center/cover fixed;
+    color: var(--dark);
+    min-height: 100vh;
+  }
+  #start {
+    position: fixed; inset: 0;
+    background: linear-gradient(rgba(8,20,14,.85), rgba(8,20,14,.92)), url('imagine_images/JMfao.jpg') center/cover;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: white; text-align: center; z-index: 10; padding: 20px;
+  }
+  #start h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(2.4rem, 6vw, 3.8rem);
+    background: linear-gradient(90deg, #2ecc71, #f1c40f);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin: 8px 0;
+  }
+  #start .subtitle { font-size: 1.1rem; opacity: .9; margin-bottom: 8px; }
+  #start p { max-width: 560px; margin: 10px 0 26px; font-size: 1.05rem; line-height: 1.5; }
+  .badges { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; justify-content: center; }
+  .badge { background: rgba(255,255,255,.15); padding: 6px 14px; border-radius: 20px; font-size: .85rem; font-weight: 600; }
+  .btn {
+    background: linear-gradient(135deg, #2ecc71, #1e8a4c);
+    color: white; border: none; padding: 14px 34px;
+    font-size: 1.05rem; font-weight: 600; border-radius: 50px;
+    cursor: pointer; box-shadow: 0 6px 18px rgba(46,204,113,.35);
+    transition: .2s;
+  }
+  .btn:hover { transform: translateY(-2px); }
+
+  #game { display: none; max-width: 1080px; margin: 0 auto; padding: 14px; }
+
+  .header {
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(255,255,255,.1); backdrop-filter: blur(8px);
+    color: white; padding: 12px 18px; border-radius: 14px; margin-bottom: 14px;
+  }
+  .mini { font-size: .8rem; opacity: .85; }
+
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px;
+  }
+  .stat {
+    background: var(--card); border-radius: 14px; padding: 12px;
+    text-align: center; box-shadow: 0 4px 14px rgba(0,0,0,.08);
+  }
+  .stat .lbl { font-size: .75rem; color: #666; font-weight: 500; }
+  .stat .num { font-size: 1.4rem; font-weight: 700; color: var(--green); margin: 2px 0; }
+  .bar { height: 5px; background: #eee; border-radius: 5px; margin-top: 5px; overflow: hidden; }
+  .bar > span { display: block; height: 100%; transition: width .4s; }
+
+  .story {
+    background: var(--card);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 8px 28px rgba(0,0,0,.12);
+    margin-bottom: 14px;
+  }
+  .story-body { padding: 20px; }
+  .story-body .tag {
+    display: inline-block;
+    background: #1e8a4c;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: .75rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .story-body h2 { font-size: 1.28rem; margin-bottom: 8px; }
+  .story-body p { line-height: 1.55; color: #333; margin-bottom: 16px; }
+
+  .choices { display: flex; flex-direction: column; gap: 8px; }
+  .choice {
+    background: #f7fbf8; border: 2px solid #e5eee8; border-radius: 12px;
+    padding: 13px 15px; text-align: left; cursor: pointer; transition: .18s;
+  }
+  .choice:hover { border-color: var(--light); background: #f0f9f3; }
+  .choice .pill { font-size: .7rem; font-weight: 700; color: var(--green); margin-bottom: 2px; }
+  .choice .cost { float: right; font-weight: 600; color: #c0392b; font-size: .85rem; }
+
+  .log {
+    background: rgba(255,255,255,.94);
+    border-radius: 14px; padding: 12px 14px; max-height: 140px; overflow-y: auto;
+    font-size: .88rem; line-height: 1.4;
+  }
+  .log .good { color: #1e8a4c; }
+  .log .bad { color: #c0392b; }
+  .log .money { color: #2980b9; }
+
+  #end {
+    display: none; position: fixed; inset: 0;
+    background: rgba(8,20,14,.95); color: white;
+    flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 20; padding: 20px;
+  }
+  #end h1 { font-size: 2.4rem; margin-bottom: 10px; }
+  #end p { max-width: 540px; margin-bottom: 22px; line-height: 1.5; }
+
+  @media (max-width: 720px) {
+    .stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="start">
+  <div class="subtitle">JOGO EMPRESARIAL • IMPACTO SOCIAL</div>
+  <h1>Raízes do Impacto</h1>
+  <div class="badges">
+    <span class="badge">🤝 Parcerias</span>
+    <span class="badge">🎉 Eventos</span>
+    <span class="badge">⭐ Qualidade</span>
+  </div>
+  <p>Você começa com uma empresa bem pequena, pouco dinheiro e equipe reduzida.<br>
+  Tome decisões difíceis sobre parcerias, eventos sociais e qualidade do seu trabalho.</p>
+  <button class="btn" onclick="startGame()">Começar pequeno</button>
+</div>
+
+<div id="game">
+  <div class="header">
+    <div>
+      <strong>🌱 Raízes do Impacto</strong>
+      <div class="mini">Parcerias • Eventos • Qualidade</div>
+    </div>
+    <div>Dia <span id="day">1</span></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="lbl">💰 Caixa</div><div class="num" id="money">R$ 2.400</div></div>
+    <div class="stat"><div class="lbl">🤝 Impacto Social</div><div class="num" id="impact">8</div><div class="bar"><span id="ibar" style="width:8%;background:#2ecc71"></span></div></div>
+    <div class="stat"><div class="lbl">❤️ Reputação</div><div class="num" id="rep">30</div><div class="bar"><span id="rbar" style="width:30%;background:#2980b9"></span></div></div>
+    <div class="stat"><div class="lbl">⭐ Qualidade</div><div class="num" id="quality">40</div><div class="bar"><span id="qbar" style="width:40%;background:#f39c12"></span></div></div>
+  </div>
+
+  <div class="story">
+    <div class="story-body">
+      <div class="tag" id="sTag">Início</div>
+      <h2 id="sTitle">Empresa pequena</h2>
+      <p id="sText">Carregando...</p>
+      <div class="choices" id="choices"></div>
+    </div>
+  </div>
+
+  <div class="log" id="log"><p>Você começou com pouco dinheiro e uma equipe pequena. Cada decisão importa.</p></div>
+</div>
+
+<div id="end">
+  <h1 id="eTitle">Final</h1>
+  <p id="eText">...</p>
+  <button class="btn" onclick="location.reload()">Jogar Novamente</button>
+</div>
+
+<script>
+let money = 2400, impact = 8, rep = 30, quality = 40, day = 1;
+let idx = 0;
+
+const stories = [
+  {
+    tag: "Começo Difícil",
+    title: "Os primeiros dias apertados",
+    text: "Sua empresa acaba de abrir em um espaço pequeno da comunidade. Você tem apenas dois jovens ajudando e o caixa está bem limitado. As pessoas da vila ainda não conhecem bem o trabalho de vocês. Como você usa esse pouco dinheiro no início?",
+    img: "imagine_images/eTydX.jpg",
+    choices: [
+      { t: "Investir em materiais de melhor qualidade", cost: "-R$ 680", m: -680, i: 5, r: 3, q: 16, log: "Os materiais melhores fizeram diferença na percepção das pessoas." },
+      { t: "Organizar um encontro simples para se apresentar", cost: "-R$ 420", m: -420, i: 11, r: 9, q: 2, log: "O encontro aproximou a empresa da comunidade." },
+      { t: "Economizar ao máximo e esperar", cost: "-R$ 120", m: -120, i: 1, r: -1, q: -3, log: "Guardou dinheiro, mas quase ninguém notou a empresa." }
+    ]
+  },
+  {
+    tag: "Parceria",
+    title: "A escola bate à porta",
+    text: "A diretora da escola local procura você. Ela quer uma parceria para oferecer oficinas aos alunos, mas não tem verba. Em troca, oferece o espaço da escola e divulgação para as famílias. Sua equipe ainda é pequena e o dinheiro é curto.",
+    img: "imagine_images/tkBPS.jpg",
+    choices: [
+      { t: "Aceitar e investir em uma parceria de verdade", cost: "-R$ 580", m: -580, i: 19, r: 15, q: 7, log: "A parceria com a escola abriu portas importantes na comunidade." },
+      { t: "Fazer apenas uma oficina experimental", cost: "-R$ 220", m: -220, i: 8, r: 6, q: 2, log: "Testou a ideia sem comprometer tanto o caixa." },
+      { t: "Recusar por enquanto", cost: "R$ 0", m: 0, i: -4, r: -7, q: 0, log: "A diretora saiu desanimada. A chance passou." }
+    ]
+  },
+  {
+    tag: "Evento",
+    title: "Convite da associação de moradores",
+    text: "A associação do bairro convida sua empresa para ajudar a organizar um evento comunitário no final de semana. Pode ser uma ótima chance de mostrar o trabalho, mas vai exigir dinheiro, tempo e esforço da sua equipe pequena.",
+    img: "imagine_images/JMfao.jpg",
+    choices: [
+      { t: "Assumir a organização do evento", cost: "-R$ 850", m: -850, i: 21, r: 17, q: 4, log: "O evento foi bem organizado e a comunidade elogiou bastante." },
+      { t: "Participar apenas apoiando com o que der", cost: "-R$ 280", m: -280, i: 9, r: 7, q: 1, log: "Ajudou sem se sobrecarregar demais." },
+      { t: "Não participar desta vez", cost: "R$ 0", m: 0, i: -1, r: -5, q: 0, log: "A associação notou a ausência da empresa." }
+    ]
+  },
+  {
+    tag: "Qualidade",
+    title: "As primeiras reclamações",
+    text: "Depois de algumas ações, algumas pessoas comentam que o atendimento ficou corrido e que os materiais não estavam tão bons. Sua equipe está cansada e o caixa não permite muitos erros.",
+    img: "imagine_images/Nir6r.jpg",
+    choices: [
+      { t: "Investir para corrigir a qualidade", cost: "-R$ 620", m: -620, i: 4, r: 9, q: 19, log: "A melhoria na qualidade foi notada e bem recebida." },
+      { t: "Pedir desculpas e seguir do mesmo jeito", cost: "R$ 0", m: 0, i: -3, r: -6, q: -8, log: "As reclamações continuaram e a reputação caiu." },
+      { t: "Contratar mais uma pessoa para ajudar", cost: "-R$ 780", m: -780, i: 7, r: 4, q: 9, log: "A equipe maior aliviou a pressão e melhorou o serviço." }
+    ]
+  },
+  {
+    tag: "Parceria + Evento",
+    title: "Proposta da ONG local",
+    text: "Uma ONG da região propõe realizar um evento conjunto. Eles cobrem parte dos custos, mas esperam que sua empresa cuide da qualidade e da organização. É uma chance boa, porém arriscada para o seu tamanho atual.",
+    img: "imagine_images/eTydX.jpg",
+    choices: [
+      { t: "Aceitar e investir na qualidade do evento", cost: "-R$ 520", m: -520, i: 17, r: 16, q: 11, log: "A parceria com a ONG resultou em um evento bem avaliado." },
+      { t: "Aceitar gastando o mínimo possível", cost: "-R$ 180", m: -180, i: 7, r: 4, q: -4, log: "O evento aconteceu, mas a qualidade ficou abaixo do esperado." },
+      { t: "Recusar para não arriscar", cost: "R$ 0", m: 0, i: 0, r: -3, q: 1, log: "Preferiu não se comprometer neste momento." }
+    ]
+  },
+  {
+    tag: "Decisão Crítica",
+    title: "A prefeitura apresenta uma oportunidade",
+    text: "A prefeitura oferece incluir sua empresa em um programa social do bairro. O potencial de impacto é alto, mas o investimento inicial é pesado para uma empresa que ainda está começando e tem pouco caixa.",
+    img: "imagine_images/JMfao.jpg",
+    choices: [
+      { t: "Aceitar o desafio e investir", cost: "-R$ 980", m: -980, i: 23, r: 19, q: 6, log: "A parceria com a prefeitura deu um salto no impacto da empresa." },
+      { t: "Propor um projeto piloto menor", cost: "-R$ 380", m: -380, i: 11, r: 9, q: 4, log: "Conseguiu testar a parceria de forma mais segura." },
+      { t: "Recusar para proteger o caixa", cost: "R$ 0", m: 0, i: -2, r: -3, q: 0, log: "Evitou o risco, mas a oportunidade passou." }
+    ]
+  },
+  {
+    tag: "Equipe",
+    title: "Os jovens querem crescer com a empresa",
+    text: "Os dois jovens que trabalham com você pedem uma conversa. Eles gostam do projeto, mas sentem que precisam de mais apoio e reconhecimento para continuar motivados. O caixa continua apertado.",
+    img: "imagine_images/Nir6r.jpg",
+    choices: [
+      { t: "Investir em capacitação e reconhecimento", cost: "-R$ 540", m: -540, i: 8, r: 7, q: 14, log: "A equipe se sentiu valorizada e a qualidade do trabalho melhorou." },
+      { t: "Prometer melhorias quando o caixa permitir", cost: "R$ 0", m: 0, i: 1, r: -2, q: -4, log: "Eles entenderam, mas ficaram um pouco desanimados." },
+      { t: "Dar um pequeno bônus", cost: "-R$ 320", m: -320, i: 4, r: 3, q: 5, log: "O reconhecimento financeiro ajudou na motivação." }
+    ]
+  },
+  {
+    tag: "Comunidade",
+    title: "Moradores pedem mais presença",
+    text: "Alguns moradores comentam que a empresa poderia estar mais presente no dia a dia da comunidade, não só nos eventos grandes. Eles sugerem ações menores e mais frequentes.",
+    img: "imagine_images/JMfao.jpg",
+    choices: [
+      { t: "Criar ações semanais menores", cost: "-R$ 450", m: -450, i: 14, r: 12, q: 6, log: "A presença constante fortaleceu o vínculo com a comunidade." },
+      { t: "Manter só os eventos maiores", cost: "-R$ 100", m: -100, i: 3, r: 1, q: 1, log: "Continuou com o formato atual." },
+      { t: "Ouvir mais e planejar depois", cost: "R$ 0", m: 0, i: 2, r: 4, q: 0, log: "As pessoas gostaram de serem ouvidas." }
+    ]
+  }
+];
+
+function startGame() {
+  document.getElementById('start').style.display = 'none';
+  document.getElementById('game').style.display = 'block';
+  showStory();
+}
+
+function update() {
+  document.getElementById('money').textContent = 'R$ ' + money.toLocaleString('pt-BR');
+  document.getElementById('impact').textContent = impact;
+  document.getElementById('rep').textContent = rep;
+  document.getElementById('quality').textContent = quality;
+  document.getElementById('day').textContent = day;
+  document.getElementById('ibar').style.width = Math.min(100, impact) + '%';
+  document.getElementById('rbar').style.width = Math.min(100, rep) + '%';
+  document.getElementById('qbar').style.width = Math.min(100, quality) + '%';
+}
+
+function addLog(msg, cls = '') {
+  const log = document.getElementById('log');
+  const p = document.createElement('p');
+  p.textContent = '• ' + msg;
+  if (cls) p.className = cls;
+  log.appendChild(p);
+  log.scrollTop = log.scrollHeight;
+}
+
+function showStory() {
+  const s = stories[idx % stories.length];
+  document.getElementById('sTag').textContent = s.tag;
+  document.getElementById('sTitle').textContent = s.title;
+  document.getElementById('sText').textContent = s.text;
+
+  const box = document.getElementById('choices');
+  box.innerHTML = '';
+  s.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice';
+    btn.innerHTML = `<div class="pill">Decisão</div><strong>${c.t}</strong><span class="cost">${c.cost}</span>`;
+    btn.onclick = () => pick(i);
+    box.appendChild(btn);
+  });
+  update();
+}
+
+function pick(i) {
+  const s = stories[idx % stories.length];
+  const c = s.choices[i];
+  money += c.m || 0;
+  impact = Math.max(0, Math.min(140, impact + (c.i || 0)));
+  rep = Math.max(0, Math.min(100, rep + (c.r || 0)));
+  quality = Math.max(0, Math.min(100, quality + (c.q || 0)));
+
+  let cls = c.i >= 12 ? 'good' : (c.i < 0 || c.q < 0) ? 'bad' : (c.m < 0 ? 'money' : '');
+  addLog(c.log, cls);
+
+  day++;
+  // receita pequena baseada em reputação e qualidade
+  const passive = Math.floor((rep + quality) * 1.2 + 40);
+  money += passive;
+  addLog(`Receita do dia: +R$ ${passive}`, 'money');
+
+  idx++;
+
+  if (impact >= 90 && quality >= 50 && money > 200) {
+    finish(true);
+  } else if (money <= 0 && day > 3) {
+    finish(false);
+  } else {
+    showStory();
+  }
+}
+
+function finish(win) {
+  document.getElementById('game').style.display = 'none';
+  const end = document.getElementById('end');
+  end.style.display = 'flex';
+  if (win) {
+    document.getElementById('eTitle').textContent = 'Continuidade da Empresa';
+    document.getElementById('eText').textContent = 'Sua empresa conseguiu se manter saudável e com impacto social. As parcerias, os eventos e a qualidade garantiram uma boa continuidade do negócio na comunidade.';
+  } else {
+    document.getElementById('eTitle').textContent = 'Falência';
+    document.getElementById('eText').textContent = 'O caixa chegou a zero. A empresa entrou em falência. Com pouco dinheiro no início, as decisões de investimento precisavam ser mais cuidadosas.';
+  }
+}
+
+update();
+</script>
+</body>
+</html>
